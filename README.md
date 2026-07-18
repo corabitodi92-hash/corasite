@@ -27,3 +27,4 @@
 4. Publish directory : `/` (racine)
 
 Aucune étape de build, aucune dépendance : c'est du HTML/CSS/JS pur.
+# cora
