@@ -396,7 +396,65 @@
       if(!reduceMotion && Math.random() < 0.2){
         setTimeout(strike, 200 + Math.random()*200);
       }
-      scheduleNextStrike();
+  scheduleNextStrike();
+
+  /* ---------- Pluie sur la navbar ---------- */
+  (function(){
+    const canvas = document.getElementById('nav-rain');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const header = canvas.parentElement;
+    let drops = [];
+
+    function resize(){
+      canvas.width = header.offsetWidth * devicePixelRatio;
+      canvas.height = header.offsetHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+
+    function spawnDrop(){
+      const w = header.offsetWidth;
+      return {
+        x: Math.random() * w,
+        y: -10,
+        len: 10 + Math.random() * 18,
+        speed: 4 + Math.random() * 6,
+        opacity: 0.15 + Math.random() * 0.25,
+        width: 0.5 + Math.random() * 0.8
+      };
+    }
+
+    function animate(){
+      const w = header.offsetWidth, h = header.offsetHeight;
+      ctx.clearRect(0,0,w,h);
+
+      if(Math.random() < 0.4 && drops.length < 60){
+        drops.push(spawnDrop());
+      }
+
+      for(let i = drops.length - 1; i >= 0; i--){
+        const d = drops[i];
+        d.y += d.speed;
+        if(d.y > h + 10){
+          drops.splice(i, 1);
+          continue;
+        }
+        ctx.beginPath();
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x - 1, d.y + d.len);
+        ctx.strokeStyle = `rgba(96, 165, 250, ${d.opacity})`;
+        ctx.lineWidth = d.width;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+  })();
     }, delay);
   }
   scheduleNextStrike();
